@@ -4,7 +4,7 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
-from Dados import (variaveis,link_foto, matricula, nomecompleto, cpf,
+from Dados import (link_foto, matricula, nomecompleto, cpf,
         datanascimento, sexo, tipo_sanguineo, 
         estado_civil, datacasamento, profissao, 
         naturalidade, nacionalidade,rua, complemento,
@@ -18,7 +18,7 @@ from Dados import (variaveis,link_foto, matricula, nomecompleto, cpf,
         nome_filho2, datanascimento_filho2, filho2_membro,
         nome_filho3, datanascimento_filho3, filho3_membro,
         nome_filho4, datanascimento_filho4, filho4_membro,
-        nome_filho5, datanascimento_filho5, filho5_membro )
+        nome_filho5, datanascimento_filho5, filho5_membro, cadastrador )
 
 def confirmando():
     SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
@@ -94,7 +94,8 @@ def confirmando():
                 "Seu filho(a) 4 é membro da PIB Pavuna?": [str(filho4_membro.value)],
                 "Nome do filho(a) 5": [str(nome_filho5.value)],
                 "Data de Nascimento do filho(a) 5": [str(datanascimento_filho5.value)],
-                "Seu filho(a) 5 é membro da PIB Pavuna?": [str(filho5_membro.value)]
+                "Seu filho(a) 5 é membro da PIB Pavuna?": [str(filho5_membro.value)],
+                "Cadastrante": [(str(cadastrador.value))]
         }
 
         valores = [[v[0] for v in dados.values()]]
