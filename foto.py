@@ -40,5 +40,3 @@ def upload_to_drive(file_path):
 
     link_foto = f"https://drive.google.com/thumbnail?sz=w500&id={file_id}"
     return link_foto
-
-
