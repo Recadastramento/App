@@ -1,0 +1,19 @@
+body {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+}
+
+.sugestoes {
+    border: 1px solid #ccc;
+    max-width: 200px;
+    position: absolute;
+}
+
+.sugestao {
+    padding: 10px;
+    cursor: pointer;
+}
+
+.sugestao:hover {
+    background-color: #f0f0f0;
+}
