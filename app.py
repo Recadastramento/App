@@ -1,8 +1,8 @@
 from flask import Flask, render_template, request, jsonify, redirect, url_for, flash
 from sugest import sugestoes
-from preencher import autopreencher  # Importe a função autopreencher
+from preencher import autopreencher
 from sugest import CadastroPIB
-from subirgoogle import confirmando  # Importa a função confirmando
+from subirgoogle import confirmando
 from flask_cors import CORS
 from cep import consulta_cep
 from foto import upload_to_drive
@@ -21,44 +21,43 @@ def index():
 def sugestoes_route():
     return sugestoes()
 
-@app.route('/preencher', methods=['POST'])  # Novo endpoint
+@app.route('/preencher', methods=['POST'])
 def preencher_route():
-    print('ok')
-    nome_inserido = request.form.get('nome')  # Obtém o nome do corpo da requisição
+    nome_inserido = request.form.get('nome')
     if not nome_inserido:
         return jsonify({"error": "Nome não informado"}), 400
     
-    # Aqui você pode adicionar a lógica para confirmar o nome
-    if not confirmar_nome(nome_inserido):  # Verifica se o nome é válido
+    if not confirmar_nome(nome_inserido):
         return jsonify({"error": "Nome inválido ou não encontrado"}), 404
 
-    # Chama a função autopreencher
     dados = autopreencher(nome_inserido)
-
-    # Chama a função confirmando
-    confirmando(None)  # Chame a função confirmando
-
-    return jsonify(dados)  # Retorna os dados preenchidos como JSON
+    return jsonify(dados)
 
 def confirmar_nome(nome):
-    # Verifica se o nome está na lista de nomes completos
-    return nome in CadastroPIB["Nome Completo"].values  # Ajuste para a verificação correta
+    return nome in CadastroPIB["Nome Completo"].values
 
 @app.route('/confirmar_cep', methods=['POST'])
 def confirmar_cep_route():
-    cep_input = request.form.get('cep')  # Obtém o CEP do corpo da requisição
+    cep_input = request.form.get('cep')
     if not cep_input:
         return jsonify({"error": "CEP não informado"}), 400
 
-    dados = consulta_cep(cep_input)  # Chama a função para consultar o CEP
-
+    dados = consulta_cep(cep_input)
     if "erro" in dados:
-        return jsonify(dados), 404  # Retorna erro se o CEP não for encontrado
+        return jsonify(dados), 404
 
-    return jsonify(dados)  # Retorna os dados do endereço como JSON
+    return jsonify(dados)
+
+@app.route('/finalizarCadastro', methods=['POST'])
 def finalizar_cadastro_route():
-    confirmando()  # Chama a função confirmando()
-    return jsonify({"message": "Cadastro finalizado com sucesso!"})
+    try:
+        confirmando()
+        flash("Cadastro finalizado com sucesso!")  # Mensagem de sucesso
+        return redirect(url_for('index'))
+    except Exception as e:
+        print(f'Erro ao finalizar cadastro: {e}')
+        flash("Erro ao finalizar cadastro.")  # Mensagem de erro
+        return redirect(url_for('index'))
 
 @app.route('/upload', methods=['POST'])
 def upload():
@@ -68,30 +67,26 @@ def upload():
         return redirect(url_for('index'))
     
     file = request.files['file']
-
     if file.filename == '':
         flash('Nenhum arquivo selecionado.')
         return redirect(url_for('index'))
-    
+
     if not os.path.exists('uploads'):
         os.makedirs('uploads')
-    
+
     file_path = os.path.join('uploads', file.filename)
     file.save(file_path)
-    
+
     try:
         link = upload_to_drive(file_path)
         link_foto.value = link
-        print(link_foto.value)
     except Exception as e:
-        print(f'Erro ao fazer upload para o Google Drive: {e}')  # Log de erro
+        print(f'Erro ao fazer upload para o Google Drive: {e}')
         flash(f'Erro ao fazer upload para o Google Drive: {e}')
         return redirect(url_for('index'))
 
-    
     flash(f'Upload realizado com sucesso! Link: {link}')
-    return redirect(url_for('index'))  # Redireciona para a página inicial
-
+    return redirect(url_for('index'))
 
 if __name__ == '__main__':
     app.run(host="localhost", port=5000, debug=True)
