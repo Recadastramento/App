@@ -7,6 +7,13 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
+    <h4>Foto</h4>
+    <form action="/upload" method="post" enctype="multipart/form-data">
+        <input type="file" name="file" accept="image/*" required>
+        <button type="submit">Enviar Foto</button>
+    </form>
+    <div id="resultadoUpload"></div>
+
     <h1>Autopreenchimento de Nomes</h1>
     <input type="text" id="nomeInput" placeholder="Digite um nome">
     <div id="sugestoes" class="sugestoes"></div>
@@ -21,14 +28,10 @@
     <div id="resultadoCEP"></div>
 
     <h3>Finalizar Cadastro</h3>
-    <button onclick="finalizarCadastro()">Finalizar Cadastro</button>
-
-    <h4>Foto</h4>
-    <form action="/upload" method="post" enctype="multipart/form-data">
-        <input type="file" name="file" accept="image/*" required>
-        <button type="submit">Enviar Foto</button> <!-- Botão para enviar o arquivo -->
+    <form action="/finalizarCadastro" method="post">
+        <button type="submit">Finalizar Cadastro</button>
     </form>
-    <div id="resultadoUpload"></div>
+
 
     <!-- Exibir mensagens de flash -->
     {% with messages = get_flashed_messages() %}
@@ -42,21 +45,6 @@
     {% endwith %}
 
     <script>
-        async function finalizarCadastro() {
-            const response = await fetch('http://127.0.0.1:5000/finalizar_cadastro', {
-                method: 'POST'
-            });
-
-            const dados = await response.json();
-            const resultadoDiv = document.getElementById('resultado');
-
-            if (response.ok) {
-                resultadoDiv.innerHTML = `<p>${dados.message}</p>`;
-            } else {
-                resultadoDiv.innerHTML = `<p style="color: red;">${dados.error}</p>`;
-            }
-        }
-
         async function enviarDados() {
             const nome = document.querySelector('#nomeInput').value;
             const response = await fetch('http://127.0.0.1:5000/preencher', {
