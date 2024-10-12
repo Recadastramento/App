@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autopreenchimento</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Autopreenchimento de Nomes</h1>
+    <input type="text" id="nomeInput" placeholder="Digite um nome">
+    <div id="sugestoes" class="sugestoes"></div>
+    <button onclick="fazer_requisicao()">Fazer requisição</button>
+
+    <script>
+        async function fazer_requisicao()
+        {
+            const promise = await fetch('http://127.0.0.1:5000/preencher', {
+                method: 'POST',
+                body: new URLSearchParams({
+                    nome: document.querySelector('#nomeInput').value
+                })
+            })
+            const resp = await promise.json()
+        }
+        const inputElement = document.getElementById('nomeInput');
+        const sugestoesElement = document.getElementById('sugestoes');
+
+        inputElement.addEventListener('input', async () => {
+            const texto = inputElement.value;
+            const response = await fetch(`/sugestoes?texto=${encodeURIComponent(texto)}`);
+            const data = await response.json();
+
+            sugestoesElement.innerHTML = ''; // Limpa as sugestões
+
+            data.sugestoes.forEach(nome => {
+                const div = document.createElement('div');
+                div.innerText = nome;
+                div.classList.add('sugestao');
+                div.onclick = () => {
+                    inputElement.value = nome;
+                    sugestoesElement.innerHTML = ''; // Limpa as sugestões
+                };
+                sugestoesElement.appendChild(div);
+            });
+        });
+    </script>
+</body>
+</html>
