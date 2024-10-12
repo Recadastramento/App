@@ -33,6 +33,7 @@ nome_pai = Variavel()
 cargo_atual = Variavel()
 databatismo = Variavel()
 igrejabatismo = Variavel()
+bairro_igreja = Variavel()
 entradaPIB = Variavel()
 formaentrada = Variavel()
 nome_filho1 = Variavel()
@@ -80,6 +81,7 @@ variaveis = [
     cargo_atual,
     databatismo,
     igrejabatismo,
+    bairro_igreja,
     entradaPIB,
     formaentrada,
     sexo,
@@ -103,7 +105,3 @@ variaveis = [
     filho5_membro,
     link_foto
 ]
-
-
-
-
