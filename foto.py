@@ -9,6 +9,7 @@ from googleapiclient.http import MediaFileUpload
 app = Flask(__name__)
 Ftoken = "Versão PARA Site\\tokens\\Ftoken.json"
 SCOPES = ['https://www.googleapis.com/auth/drive.file']
+#FOLDER_ID = '1KYUWJvS2adgo8bJzzmwfCBLY7Fa9qPD2'
 
 def upload_to_drive(file_path):
     creds = None
@@ -28,7 +29,14 @@ def upload_to_drive(file_path):
 
     service = build('drive', 'v3', credentials=creds)
 
-    file_metadata = {'name': os.path.basename(file_path)}
+    # Defina o FOLDER_ID aqui
+    FOLDER_ID = '1KYUWJvS2adgo8bJzzmwfCBLY7Fa9qPD2'  # Substitua pelo seu ID de pasta
+
+    file_metadata = {
+        'name': os.path.basename(file_path),
+        'parents': [FOLDER_ID]  # Adicione o folder ID aqui
+    }
+    
     media = MediaFileUpload(file_path, mimetype='image/jpeg')
     file = service.files().create(body=file_metadata, media_body=media, fields='id').execute()
 
