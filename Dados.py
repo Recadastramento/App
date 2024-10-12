@@ -51,6 +51,7 @@ filho4_membro = Variavel()
 nome_filho5 = Variavel()
 datanascimento_filho5 = Variavel()
 filho5_membro = Variavel()
+cadastrador =  Variavel()
 
 
 variaveis = [
@@ -103,5 +104,6 @@ variaveis = [
     nome_filho5,
     datanascimento_filho5,
     filho5_membro,
-    link_foto
+    link_foto,
+    cadastrador
 ]
