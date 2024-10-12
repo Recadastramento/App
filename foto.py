@@ -9,8 +9,6 @@ from googleapiclient.http import MediaFileUpload
 app = Flask(__name__)
 Ftoken = "Versão PARA Site\\tokens\\Ftoken.json"
 SCOPES = ['https://www.googleapis.com/auth/drive.file']
-#FOLDER_ID = '1KYUWJvS2adgo8bJzzmwfCBLY7Fa9qPD2'
-
 def upload_to_drive(file_path):
     creds = None
 
