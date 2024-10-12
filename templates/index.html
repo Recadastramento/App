@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autopreenchimento</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Autopreenchimento de Nomes</h1>
+    <input type="text" id="nomeInput" placeholder="Digite um nome">
+    <div id="sugestoes" class="sugestoes"></div>
+    <button onclick="enviarDados()">Enviar Dados</button>
+
+    <div id="resultado"></div>
+
+    <h2>Autopreenchimento CEP</h2>
+    <input type="text" id="CEPInput" placeholder="Informe seu novo CEP">
+    <div id="segestoesCEP" class="segestoesCEP"></div>
+    <button onclick="requisicaoCEP()">Requisição Novo CEP</button>
+    <div id="resultadoCEP"></div>
+
+    <h3>Finalizar Cadastro</h3>
+    <button onclick="finalizarCadastro()">Finalizar Cadastro</button>
+
+    <h4>Foto</h4>
+    <form action="/upload" method="post" enctype="multipart/form-data">
+        <input type="file" name="file" accept="image/*" required>
+        <button type="submit">Enviar Foto</button> <!-- Botão para enviar o arquivo -->
+    </form>
+    <div id="resultadoUpload"></div>
+
+    <!-- Exibir mensagens de flash -->
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul>
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+
+    <script>
+        async function finalizarCadastro() {
+            const response = await fetch('http://127.0.0.1:5000/finalizar_cadastro', {
+                method: 'POST'
+            });
+
+            const dados = await response.json();
+            const resultadoDiv = document.getElementById('resultado');
+
+            if (response.ok) {
+                resultadoDiv.innerHTML = `<p>${dados.message}</p>`;
+            } else {
+                resultadoDiv.innerHTML = `<p style="color: red;">${dados.error}</p>`;
+            }
+        }
+
+        async function enviarDados() {
+            const nome = document.querySelector('#nomeInput').value;
+            const response = await fetch('http://127.0.0.1:5000/preencher', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: new URLSearchParams({ nome: nome })
+            });
+
+            const dados = await response.json();
+            const resultadoDiv = document.getElementById('resultado');
+
+            if (response.ok) {
+                resultadoDiv.innerHTML = `<p>Dados enviados com sucesso!</p>`;
+            } else {
+                resultadoDiv.innerHTML = `<p style="color: red;">${dados.error}</p>`;
+            }
+        }
+
+        async function requisicaoCEP() {
+            const cep = document.querySelector('#CEPInput').value;
+            const promise = await fetch('http://127.0.0.1:5000/confirmar_cep', {
+                method: 'POST',
+                body: new URLSearchParams({ cep: cep })
+            });
+
+            const dados = await promise.json();
+            const resultadoDiv = document.getElementById('resultadoCEP');
+
+            if (promise.ok) {
+                resultadoDiv.innerHTML = `
+                    <p>Rua: ${dados.logradouro}</p>
+                    <p>Bairro: ${dados.bairro}</p>
+                    <p>Cidade: ${dados.localidade}</p>
+                    <p>Estado: ${dados.uf}</p>
+                `;
+            } else {
+                resultadoDiv.innerHTML = `<p style="color: red;">${dados.error}</p>`;
+            }
+        }
+
+        const inputElement = document.getElementById('nomeInput');
+        const sugestoesElement = document.getElementById('sugestoes');
+
+        inputElement.addEventListener('input', async () => {
+            const texto = inputElement.value;
+            const response = await fetch(`/sugestoes?texto=${encodeURIComponent(texto)}`);
+            const data = await response.json();
+
+            sugestoesElement.innerHTML = ''; // Limpa as sugestões
+
+            data.sugestoes.forEach(nome => {
+                const div = document.createElement('div');
+                div.innerText = nome;
+                div.classList.add('sugestao');
+                div.onclick = () => {
+                    inputElement.value = nome;
+                    sugestoesElement.innerHTML = ''; // Limpa as sugestões
+                };
+                sugestoesElement.appendChild(div);
+            });
+        });
+    </script>
+</body>
+</html>
