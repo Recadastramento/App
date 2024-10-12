@@ -4,7 +4,7 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
-from Dados import (variaveis, link_foto, matricula, nomecompleto, cpf,
+from Dados import (variaveis,link_foto, matricula, nomecompleto, cpf,
         datanascimento, sexo, tipo_sanguineo, 
         estado_civil, datacasamento, profissao, 
         naturalidade, nacionalidade,rua, complemento,
@@ -116,5 +116,3 @@ def confirmando(evento):
 
     for variavel in variaveis:
         variavel.value = ""
-
-    
