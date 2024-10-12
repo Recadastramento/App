@@ -10,8 +10,19 @@
     <h1>Autopreenchimento de Nomes</h1>
     <input type="text" id="nomeInput" placeholder="Digite um nome">
     <div id="sugestoes" class="sugestoes"></div>
+    <button onclick="fazer_requisicao()">Fazer requisição</button>
 
     <script>
+        async function fazer_requisicao()
+        {
+            const promise = await fetch('http://127.0.0.1:5000/preencher', {
+                method: 'POST',
+                body: new URLSearchParams({
+                    nome: document.querySelector('#nomeInput').value
+                })
+            })
+            const resp = await promise.json()
+        }
         const inputElement = document.getElementById('nomeInput');
         const sugestoesElement = document.getElementById('sugestoes');
 
