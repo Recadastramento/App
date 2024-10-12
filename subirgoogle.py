@@ -20,7 +20,7 @@ from Dados import (variaveis,link_foto, matricula, nomecompleto, cpf,
         nome_filho4, datanascimento_filho4, filho4_membro,
         nome_filho5, datanascimento_filho5, filho5_membro )
 
-def confirmando(evento):
+def confirmando():
     SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
     SPREADSHEET_ID = "197dGyWjtAVUVR2K8eODfIxfrEFgeErTcxMhp3OIX8N0"
     RANGE_NAME = "Dados!A1:AY3000"
@@ -40,7 +40,7 @@ def confirmando(evento):
 
         with open(Stoken, "w") as token:
             token.write(creds.to_json())
-
+    print("Autenticação concluída.")
     try:
         service = build("sheets", "v4", credentials=creds)
         sheet = service.spreadsheets()
@@ -110,9 +110,6 @@ def confirmando(evento):
         response = request.execute()
 
         print(f"Dados adicionados com sucesso: {response}")
-
+        print("Dados adicionados com sucesso.")
     except HttpError as error:
-        print(f"An error occurred: {error}")
-
-    for variavel in variaveis:
-        variavel.value = ""
+        print(f"Erro ao adicionar dados: {error}")
